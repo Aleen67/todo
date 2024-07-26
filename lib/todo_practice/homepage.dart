@@ -10,12 +10,17 @@ class HomepageNew extends StatefulWidget {
 }
 
 class _HomepageState extends State<HomepageNew> {
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   List item = [
     ['First Work', false],
     ['second Work', false]
   ];
- 
+  // void onSaved() {
+  //   setState(() {
+  //     item.add([_controller.text, false]);
+  //   });
+  //   Navigator.of(context).pop();
+  // }
 
   void newBox() {
     showDialog(
@@ -24,15 +29,10 @@ class _HomepageState extends State<HomepageNew> {
           return Mynewtask(
             controller: _controller,
             onPressed: () {
-              if (_controller.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("type something")));
-              } else {
-                setState(() {
-                  item.add([_controller.text, false]);
-                });
-                Navigator.of(context).pop();
-              }
+              setState(() {
+                item.add([_controller.text, false]);
+              });
+              Navigator.of(context).pop();
             },
           );
         });
@@ -42,6 +42,10 @@ class _HomepageState extends State<HomepageNew> {
     setState(() {
       item[index][1] = !item[index][1];
     });
+  }
+
+  void _dismissible(index) {
+    item.removeAt(index);
   }
 
   @override
@@ -61,10 +65,20 @@ class _HomepageState extends State<HomepageNew> {
       body: ListView.builder(
           itemCount: item.length,
           itemBuilder: (contex, index) {
-            return Mylist(
-              checkvalue: item[index][1],
-              onChanged: (value) => whenClick(index),
-              taskname: item[index][0],
+            return Dismissible(
+              onDismissed: (direction) {
+                _dismissible(index);
+              },
+              key: Key(item[index]),
+              background: Container(
+                color: Colors.redAccent,
+                child: const Icon(Icons.delete),
+              ),
+              child: Mylist(
+                checkvalue: item[index][1],
+                onChanged: (value) => whenClick(index),
+                taskname: item[index][0],
+              ),
             );
           }),
     );
