@@ -21,7 +21,7 @@ class _MyappState extends State<Myapp> {
           useMaterial3: true,
           brightness: Brightness.light,
           primarySwatch: Colors.amber),
-      home: HomepageNew(),
+      home: const HomepageNew(),
     );
   }
 }
