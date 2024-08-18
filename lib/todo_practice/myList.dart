@@ -8,26 +8,25 @@ class Mylist extends StatelessWidget {
   final Function(bool?)? onChanged;
   Function(BuildContext)? onPressed;
 
-  Mylist({
-    super.key,
-    required this.checkvalue,
-    required this.onChanged,
-    required this.taskname,
-    required this.onPressed
-  });
+  Mylist(
+      {super.key,
+      required this.checkvalue,
+      required this.onChanged,
+      required this.taskname,
+      required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
       child: Slidable(
-        endActionPane:  ActionPane(motion: ScrollMotion(), children: [
+        endActionPane: ActionPane(motion: const ScrollMotion(), children: [
           SlidableAction(
             onPressed: onPressed,
             icon: Icons.delete,
             backgroundColor: Colors.red,
             borderRadius: BorderRadius.circular(8),
-            ),
+          ),
         ]),
         child: Container(
           height: 100,
@@ -43,14 +42,19 @@ class Mylist extends StatelessWidget {
                 const SizedBox(
                   width: 30,
                 ),
-                Text(
-                  taskname,
-                  style: TextStyle(
-                      decoration: checkvalue
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w200),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      softWrap: true,
+                      taskname,
+                      style: TextStyle(
+                          decoration: checkvalue
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w200),
+                    ),
+                  ),
                 )
               ],
             ),

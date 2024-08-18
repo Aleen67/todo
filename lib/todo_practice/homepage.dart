@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:myapp/todo_practice/database.dart';
 import 'package:myapp/todo_practice/myList.dart';
 import 'package:myapp/todo_practice/mynewtask.dart';
 
@@ -10,11 +12,22 @@ class HomepageNew extends StatefulWidget {
 }
 
 class _HomepageState extends State<HomepageNew> {
+  final _mybox = Hive.box("MyData");
   final TextEditingController _controller = TextEditingController();
-  List<dynamic> item = [
-    ['First Work', false],
-    ['second Work', false]
-  ];
+  DataBase db = DataBase();
+  // List<dynamic> item = [
+  //   ['First Work', false],
+  //   ['second Work', false]
+  // ];
+  @override
+  void initState() {
+    if (_mybox.get("item") == null) {
+      db.initialOpen();
+    } else {
+      db.loadData();
+    }
+    super.initState();
+  }
 
   void newBox() {
     showDialog(
@@ -26,13 +39,13 @@ class _HomepageState extends State<HomepageNew> {
               if (_controller.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("type a task please")));
-              }
-              else{
-                 setState(() {
-                item.add([_controller.text, false]);
-                _controller.clear();
-              });
-              Navigator.of(context).pop();
+              } else {
+                setState(() {
+                  db.item.add([_controller.text, false]);
+                  _controller.clear();
+                });
+                db.updateData();
+                Navigator.of(context).pop();
               }
             },
           );
@@ -41,8 +54,9 @@ class _HomepageState extends State<HomepageNew> {
 
   void whenClick(int index) {
     setState(() {
-      item[index][1] = !item[index][1];
+      db.item[index][1] = !db.item[index][1];
     });
+    db.updateData();
   }
 
   // void _dismissible(index) {
@@ -50,8 +64,9 @@ class _HomepageState extends State<HomepageNew> {
   // }
   void deletetask(index) {
     setState(() {
-      item.removeAt(index);
+      db.item.removeAt(index);
     });
+    db.updateData();
   }
 
   @override
@@ -69,13 +84,13 @@ class _HomepageState extends State<HomepageNew> {
         ),
       ),
       body: ListView.builder(
-          itemCount: item.length,
+          itemCount: db.item.length,
           itemBuilder: (contex, index) {
             return Mylist(
               onPressed: (p0) => deletetask(index),
-              checkvalue: item[index][1],
+              checkvalue: db.item[index][1],
               onChanged: (value) => whenClick(index),
-              taskname: item[index][0],
+              taskname: db.item[index][0],
             );
           }),
     );
